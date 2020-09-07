@@ -1,0 +1,6 @@
+data/
+aligned_data/
+*.obj
+*.pyc
+*.png
+vid2vid_input_syn/

@@ -1,0 +1,12 @@
+[CAM_P3D_SETTINGS]
+height = 5312
+width = 2988
+fx = 2822
+fy = 2822
+Rx = 1
+Ry = -2
+Rz = -15
+tx = -0.0757
+ty = -0.1509
+tz = -5
+phone_pts = reference_phone_meters.npy
