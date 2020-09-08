@@ -338,128 +338,55 @@ if __name__ == "__main__":
 
     #If a video, set the camera position before the image path loop
 
-    data_dir = '../data/single_key/'
-    aligned_data_dir = "../data/aligned_single_key/"
-    gen_single_key = True
+
 
     all_data_inputs = []
 
-    # for keypress_dir in os.listdir(data_dir):
-    #
-    #     Rx, Ry, Rz, distance_away = create_random_position()
-    #     # if keypress_dir in ['b', 'c', 'digits', 'e', 'enter', 'f', 'g', 'j', 'k', 'l','m',  'p', 'q', 'space', 'u', 'w' , 'x', 'y']:
-    #     #     print (keypress_dir)
-    #     #     continue
-    #     for image_path in glob.glob(data_dir + keypress_dir + '/*'):
-    #
-    #         intermediate_obj_file = 'intermediate_sing_key.obj'
-    #
-    #         aligned_data_path = aligned_data_dir + keypress_dir + '/'
-    #
-    #         if not os.path.exists(aligned_data_path):
-    #             os.makedirs(aligned_data_path)
-    #         aligned_image_name = aligned_data_path + image_path.split('/')[-1]
-    #
-    #         if gen_single_key:
-    #             # if we are generating single key presses, we need to rotate
-    #             # the camera for every image.
-    #             # if we are generating videos, then we need to rotate the camera
-    #             # only once
-    #             Rx, Ry, Rz, distance_away = create_random_position()
-    #
-    #         #main pipeline function here
-    #
-    #         main_pipeline(image_path,
-    #                         intermediate_obj_file,
-    #                         aligned_data_path,
-    #                         aligned_image_name,
-    #                         Rx, Ry, Rz, distance_away)
-    #
-    #
-    #
-    #         data_input = [image_path,
-    #                     intermediate_obj_file,
-    #                     aligned_data_path,
-    #                     aligned_image_name,
-    #                     Rx, Ry, Rz, distance_away]
-    #
-    #         all_data_inputs.append(data_input)
+    import argparse
 
-    # pool = Pool()
-    # pool.starmap(main_pipeline, all_data_inputs)
-    # pool.close()
+    parser = argparse.ArgumentParser()
 
+    parser.add_argument("--unaligned_data_dir", type = str, default =  '../data/single_key/')
+    parser.add_argument("--aligned_data_dir", type = str, default =  "../data/aligned_single_key/")
 
-    data_dir = '/data/jlim/syn_rl_videos/'
-    aligned_data_dir = "/data/jlim/aligned_syn_rl_videos"
+    args = parser.parse_args()
 
-    if not os.path.exists(aligned_data_dir):
-        os.makedirs(aligned_data_dir)
-    num_vids = 0
+    for keypress_dir in os.listdir(args.unaligned_data_dir):
 
-    all_video_inputs = []
-    c = 0
+        for image_path in glob.glob(args.unaligned_data_dir + keypress_dir + '/*'):
 
-    for keypress_dir in os.listdir(data_dir):
-        c+=1
-        Rx, Ry, Rz, distance_away = create_random_position()
-        video_path = os.path.join(data_dir,keypress_dir)
+            intermediate_obj_file = 'intermediate_sing_key.obj'
 
-        for video_idx in os.listdir(video_path):
-            video_idx_path = os.path.join(video_path, video_idx)
+            aligned_data_path = aligned_data_dir + keypress_dir + '/'
 
+            if not os.path.exists(aligned_data_path):
+                os.makedirs(aligned_data_path)
+            aligned_image_name = aligned_data_path + image_path.split('/')[-1]
 
-            debug_path = os.path.join(aligned_data_dir, keypress_dir, video_idx)
+            # if we are generating single key presses, we need to rotate
+            # the camera for every image.
+            # if we are generating videos, then we need to rotate the camera
+            # only once
+            Rx, Ry, Rz, distance_away = create_random_position()
 
-            num_vids += 1
+            #main pipeline function here
 
-            #sample 20 from here
-            dirFiles = os.listdir(video_idx_path)
-            sorted_frames = sorted(dirFiles,key=lambda x: int(os.path.splitext(x)[0]))
-            num_select = 200
-
-
-            if len(sorted_frames)  > 220:
-
-                #going to keep the first and last frame
-
-                clipped_frames = random.sample(sorted_frames[1:len(sorted_frames)-4], num_select)
-                clipped_sorted = sorted(clipped_frames,key=lambda x: int(os.path.splitext(x)[0]))
-                clipped_sorted.insert(0, sorted_frames[0])
-                clipped_sorted.insert(len(clipped_sorted), sorted_frames[len(sorted_frames)-4] )
-
-            else:
-                clipped_sorted = sorted_frames[:200]
-
-
-
-            clipped_sorted = [os.path.join(video_idx_path, x) for x in clipped_sorted]
-            #print (clipped_sorted)
-
-            for image_path in clipped_sorted:
-
-
-                intermediate_obj_file = 'intermediate_vid.obj'
-
-                aligned_data_path = aligned_data_dir + keypress_dir + '/'
-                aligned_data_path = aligned_data_dir + keypress_dir+ '/' + video_idx + '/'
-
-                if not os.path.exists(aligned_data_path):
-                    os.makedirs(aligned_data_path)
-
-                aligned_image_name = aligned_data_path + image_path.split('/')[-1]
-
-                data_input = [image_path,
+            main_pipeline(image_path,
                             intermediate_obj_file,
                             aligned_data_path,
                             aligned_image_name,
-                            Rx, Ry, Rz, distance_away]
+                            Rx, Ry, Rz, distance_away)
 
-                all_video_inputs.append(data_input)
 
-    print (all_video_inputs)
-    print (len(all_video_inputs))
-    exit()
-    pool = Pool(16)
-    pool.starmap(main_pipeline, all_video_inputs)
+
+            data_input = [image_path,
+                        intermediate_obj_file,
+                        aligned_data_path,
+                        aligned_image_name,
+                        Rx, Ry, Rz, distance_away]
+
+            all_data_inputs.append(data_input)
+
+    pool = Pool()
+    pool.starmap(main_pipeline, all_data_inputs)
     pool.close()

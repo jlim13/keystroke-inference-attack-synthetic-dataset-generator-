@@ -172,17 +172,9 @@ def gen_thumb(key_press_dict,
     count = 0
     while running:
 
-
         im = Image.open(xr_im)
-        #add semantic labels here
 
-
-        #blurred_image = im.filter(ImageFilter.GaussianBlur(radius = blur_level))
         blurred_image = np.array(im, dtype = np.float32)
-        #cam_noises = ['../data/0_noise.png.npy', '../data/1_noise.png.npy']
-        #this_noise = random.choice(cam_noises)
-        #this_noise = np.load(this_noise)
-        #noise_im = Image.fromarray(this_noise, 'RGB')
 
         phone_im = blurred_image[:,:,:3]
         phone_im /= 255.
@@ -260,7 +252,6 @@ def gen_thumb(key_press_dict,
 
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser()
 
     key_press_dict = {
         'a' : (15, 460),
@@ -295,6 +286,8 @@ if __name__ == "__main__":
         'digits' : (25, 530),
         'backspace' : (250, 500)
     }
+
+    parser = argparse.ArgumentParser()
 
     parser.add_argument("--left_handed", type = str2bool, default = False )
     parser.add_argument("--save", type = str2bool, default = True )

@@ -46,6 +46,17 @@ key_press_dict = {
     'backspace' : (250, 500)
 }
 
+
+def str2bool(v):
+    if isinstance(v, bool):
+       return v
+    if v.lower() in ('yes', 'true', 't', 'y', '1'):
+        return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')
+
 def blurSurf(surface, amt):
     """
     Blur the given surface by the given 'amount'.  Only values 1 and greater
@@ -214,37 +225,6 @@ def create_thumb(blurred_image, add_noise, left_handed, add_blit, noise_type ):
 
     return surface2
 
-def gen_random_block():
-    surface = pygame.Surface((100, 100),pygame.SRCALPHA)
-
-    colors = [
-        (105, 95, 85),
-        (60, 46, 40),
-        (75,57,50),
-        (90,69,60),
-        (105,80,70),
-        (120,92,80),
-        (135,103,90),
-        (150,114,100),
-        (165,126,110),
-        (180,138,120),
-        (195,149,130),
-        (210,161,140),
-        (225,172,150),
-        (240,184,160),
-        (255,195,170),
-        (255,206,180)
-    ]
-
-    color = random.choice(colors)
-    size_x = random.randint(5,35)
-    size_y = random.randint(5,35)
-    size = (0, 0, size_x, size_y)
-
-    ellipse = pygame.draw.ellipse(surface, color, size)
-
-    return surface
-
 def create_videos(screen, thumb_surface, word_path, phoneImage,save_dir, save = False):
 
     running = True
@@ -321,222 +301,22 @@ def main_(  phrase_list,
             add_noise,
             add_blit,
             noise_type,
-            save):
+            save,
+            output_dir,
+            xr_im,
+            left_handed = False):
 
 
     instances = 1
     phrase_list = parse_word_list(phrase_list)
 
-    phrase_list = ["the rainfall during the spring is brutal",
-                "the notebook is over there",
-                "its much more difficult to play tennis with a bowling ball",
-                "the laptop is out of battery",
-                "orange is my favorite juice",
-                "the high school yearbook is down by the shelf",
-                "thanks so much for the help",
-                "she did not cheat on the test for it was not the right thing to do",
-                "the clock within this blog and the clock on my laptop are different",
-                "what channel is that game on later",
-                "i am going to the store",
-                "i work for a large company",
-                "why wont you listen",
-                "at that moment she realized she had a sixth sense",
-                "he swore he just saw his sushi move",
-                "which bank do you use",
-                "looks like its going to rain",
-                "the quick brown fox jumped over the lazy dog",
-                "i have plans with my friend but we can go tomorrow",
-                "too many prisons have become early coffins",
-                "the barcelona game is on later tonight",
-                "clean the floor please",
-                "there is a good amount of debris outside",
-                "i will schedule an appointment with the dentist",
-                "my internet is so slow today",
-                "do you like sports",
-                "can you go pick my mail up at the mailbox",
-                "how was your exam",
-                "beautiful day for golf dont you think",
-                "k getting on",
-                "at least it looks nice",
-                "i am deciding between rugby cricket and golf",
-                "i think i need a belt because i lost weight",
-                "i went to go milk the cow",
-                "what text editor do you use",
-                "even with the snow falling outside",
-                "you will injure your head doing that",
-                "singapore is so hot and humid",
-                "he strives to keep the best lawn in the neighborhood",
-                "what a good way to spend your last day",
-                "i have been taking lessons for different sports",
-                "i need to customize my shoes",
-                "have to make a call",
-                "i am not sure where you are going",
-                "what is your schedule like for the next week",
-                "i am ready for bed",
-                "asheville is nice this time of year",
-                "november third is election day",
-                "he is no james bond his name is roger moore",
-                "can i please come to the concert with you",
-                "my schoolwork is going well",
-                "yeah i could probably play tonight",
-                "i just got new golf clubs today",
-                "i cant wait until football is back",
-                "that is a good summary",
-                "you need to stretch your back out",
-                "what a rare find",
-                "rugby seems like a fun sport",
-                "i play tennis tonight",
-                "i need to eat dinner",
-                "i have an appointment with the vet now",
-                "when can i come over",
-                "be careful with that butter knife",
-                "he decided water skiing on a frozen lake wasnt a good idea",
-                "are you sick",
-                "my internship is almost done",
-                "what did you think of the game",
-                "you bite up because of your lower jaw",
-                "queensland is a place on the map",
-                "what time is the movie",
-                "what concert are you going to tonight",
-                "i have no internet or power because of the storm",
-                "look at my hair",
-                "my golf lesson is going pretty poorly",
-                "the fridge is full",
-                "its not possible to convince a monkey to give you a bannana",
-                "the ruler is over there",
-                "what is your favorite travel destination",
-                "i just got a new phone today",
-                "i will be heading out to the golf course tomorrow",
-                "i have so many books to read",
-                "how was your senior year",
-                "i am so excited to show you my new phone",
-                "my girlfriend liked the gift",
-                "what courses will you be taking",
-                "thanks so much for all the help on the test",
-                "i need to go to the store",
-                "let me finish this work",
-                "the sun is a shade of yellow",
-                "the flight to singapore is so long",
-                "lets start a bookclub",
-                "want to get some coffee after this",
-                "what is your favorite juice flavor",
-                "I have a cleaner coming in tomorrow",
-                "can you facetime me later",
-                "making dinner now",
-                "the professor is going to cover a new topic",
-                "that was a good football game",
-                "i am taking a class",
-                "it was obvious she was hot sweaty and tired",
-                "no watching a show",
-                "water is good for you",
-                "thank you for your time earlier",
-                "school is hard",
-                "how is your credit score these days",
-                "pat ordered a ghost pepper pie",
-                "the flower looks nice",
-                "my wallet is out of money",
-                "nice photo",
-                "please clean up after yourself",
-                "hello",
-                "okay thanks for preparing foods",
-                "how can you eat that",
-                "what was the intention for that shot",
-                "ok can you give me five",
-                "now i have a tv",
-                "the photo album is complete",
-                "how did your interview go last week",
-                "hello how are you",
-                "my dog needs a haircut",
-                "what time are you going to be playing",
-                "our team made a great comeback earlier",
-                "big crowds stress me out",
-                "it was sunny earlier today",
-                "i started to take a course",
-                "when can i see you",
-                "your package came",
-                "seek success but always be prepared for random cats",
-                "was there a warranty",
-                "come again",
-                "i wish i could have answered the questions better",
-                "she had not had her cup of coffee",
-                "i am playing a video game",
-                "jack was reading me the book",
-                "i did not understand the teacher",
-                "just finishing something up",
-                "the trash can is over there",
-                "i am stting on this desk",
-                "we are going to the library later",
-                "how is the weather",
-                "i am at the location",
-                "i am stuck on my homework assignment",
-                "like to drink water",
-                "he was telling to go there",
-                "my dog likes to eat my eggs in the morning",
-                "i appreciate the gift",
-                "the course is a bit boring",
-                "what did you eat for dinner",
-                "where is the mailbox",
-                "my dog needs to get his haircut",
-                "i have to go to the dentist",
-                "where is my dog getting his bone",
-                "this game",
-                "she wondered what his eyes were saying",
-                "the bees decided to have a mutiny against their queen",
-                "the store was closed",
-                "how was your day at work",
-                "take your pills later today",
-                "i like to play catan",
-                "what does that word mean",
-                "can you not",
-                "she let the balloon float up into the air",
-                "thank you for the idea",
-                "how is your course coming along",
-                "the course was pretty good",
-                "australia is a hot place",
-                "where can i get help for that",
-                "thank you for your tim",
-                "please check your messages later",
-                "do you watch cricket with your friends",
-                "what time is your show",
-                "your order is ready",
-                "python is a good language",
-                "i have been to singapore",
-                "i wish i could go to the pool later today",
-                "i currently have four windows open",
-                "i need to start doing my homework on time",
-                "okay sounds good",
-                "my dogs name is rockie",
-                "turkey is for dinner",
-                "the teacher called my parents last night",
-                "i am sorry to hear that",
-                "my laptop needs a charge",
-                "i think we are lost go ask for directions",
-                "the controller is so far away",
-                "the shirt looks bad on you",
-                "that sounds like a great idea",
-                "i like to eat food",
-                "like to play basketball",
-                "i cant believe our team lost like that",
-                "the paper was boring",
-                "why would you do that",
-                "what is going on with your mom",
-                "my pen ran out of ink",
-                "i studied abroad in singapore for a semester",]
     phrase_list = [x.lower() for x in phrase_list]
     screen = pygame.display.set_mode((312, 632))
     running = True
-    im = Image.open("xr_.png")
+    im = Image.open(xr_im)
 
     blurred_image = im.filter(ImageFilter.GaussianBlur(radius = blur_level))
     blurred_image_np = np.array(blurred_image)
-
-    # if not add_noise:
-
-        # blurred_image = Image.fromarray(blurred_image)
-        # to_darken = ImageEnhance.Brightness(blurred_image)
-        # blurred_image = to_darken.enhance(0.17)
-        # blurred_image.save('xr_blur.png')
-        # phoneImage = pygame.image.load("xr_blur.png").convert() #change to xr_blur.png
 
     paths = create_words(key_press_dict, phrase_list)
 
@@ -557,12 +337,12 @@ def main_(  phrase_list,
            phoneImage, _ = create_blurry_phone(blurred_image,
                                                 noise_type)
 
-        save_dir = os.path.join('vid2vid_input_syn/', word)
+        save_dir = os.path.join(output_dir, word)
 
         if not os.path.exists(save_dir):
             os.makedirs(save_dir)
 
-            left_handed = False
+
             thumb_surface = create_thumb(blurred_image,
                                         add_noise,
                                         left_handed,
@@ -572,16 +352,31 @@ def main_(  phrase_list,
         completed += 1
 
 
-
-
 if __name__ == "__main__":
 
-    phrase_list_file = '/data/jlim/abcnews-date-text.csv'
-    add_noise = False
-    add_blit = False
-    noise_type = 'shadow'
-    noise_type = 'gaussian'
+    import argparse
 
-    save = True
+    parser = argparse.ArgumentParser()
 
-    params = main_(phrase_list_file, add_noise, add_blit, noise_type, save)
+
+    parser.add_argument("--phrase_list_file", type = str, default = '/data/jlim/abcnews-date-text.csv' )
+    parser.add_argument("--add_noise", type = str2bool, default = False )
+    parser.add_argument("--add_blit", type = str2bool, default = False)
+    parser.add_argument("--left_handed", type = str2bool, default = False)
+    parser.add_argument("--noise_type", type = str, default = 'gaussian')
+    parser.add_argument("--output_dir", type = str, default =  'video_output/')
+    parser.add_argument("--xr_im", type = str, default = 'xr_.png')
+    parser.add_argument("--save", type = str2bool, default = True )
+
+
+    args = parser.parse_args()
+
+
+    params = main_(args.phrase_list_file,
+                    args.add_noise,
+                    args.add_blit,
+                    args.noise_type,
+                    args.save,
+                    args.output_dir,
+                    args.xr_im,
+                    args.left_handed)
