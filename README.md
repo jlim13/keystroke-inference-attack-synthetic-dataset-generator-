@@ -9,8 +9,10 @@ The link to the paper is in `paper/` or you can access it [here](..paper/eccv_co
 
 ### To run: 
 ### Step 0:
-Install docker and nvidia-docker using `bash docker_scripts/install_docker.sh`
-Run our `Dockerfile` using `bash docker_scripts/docker_4_p3d.sh`
+Install docker and nvidia-docker using `bash Docker_scripts/install_docker.sh`
+Run our `Dockerfile` using `bash Docker_scripts/docker_4_p3d.sh`
+you will need to change the volumes (-v flag) in `Docker_scripts/docker_4_p3d.sh` 
+
 
 ### Step 1a: 
 To generate single key press images run `python single_key_press.py`
