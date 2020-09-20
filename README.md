@@ -4,7 +4,7 @@ Synthetic Dataset Generator for "Revisiting the Threat Space for Vision-Based Ke
 
 This is the code for our synthetic dataset generator for vision-based keystroke inference attacks presented in "Revisiting the Threat Space for Vision-Based Keystroke Inference Attacks" at ECCV (CV-COPS Workshop) 2020
 
-The link to the paper is in `paper/` or you can access it [here](..paper/eccv_cops_2020.pdf)!
+The link to the paper is in `paper/` or you can access it [here](https://arxiv.org/abs/2009.05796)!
 
 
 ### To run: 
